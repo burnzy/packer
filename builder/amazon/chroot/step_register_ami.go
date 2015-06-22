@@ -2,8 +2,10 @@ package chroot
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/awsutil"
 	"github.com/aws/aws-sdk-go/service/ec2"
 	"github.com/mitchellh/multistep"
 	awscommon "github.com/mitchellh/packer/builder/amazon/common"
@@ -32,6 +34,7 @@ func (s *StepRegisterAMI) Run(state multistep.StateBag) multistep.StepAction {
 			}
 		}
 
+		log.Printf("\n\ndevice: %s", awsutil.StringValue(newDevice))
 		blockDevices[i] = newDevice
 	}
 
@@ -42,6 +45,7 @@ func (s *StepRegisterAMI) Run(state multistep.StateBag) multistep.StepAction {
 		registerOpts.SRIOVNetSupport = aws.String("simple")
 	}
 
+	log.Printf("\n\n register opts: %s", awsutil.StringValue(registerOpts))
 	registerResp, err := ec2conn.RegisterImage(registerOpts)
 	if err != nil {
 		state.Put("error", fmt.Errorf("Error registering AMI: %s", err))
@@ -82,7 +86,10 @@ func buildRegisterOpts(config *Config, image *ec2.Image, blockDevices []*ec2.Blo
 		Architecture:        image.Architecture,
 		RootDeviceName:      image.RootDeviceName,
 		BlockDeviceMappings: blockDevices,
-		VirtualizationType:  &config.AMIVirtType,
+	}
+
+	if config.AMIVirtType != "" {
+		registerOpts.VirtualizationType = aws.String(config.AMIVirtType)
 	}
 
 	if config.AMIVirtType != "hvm" {
