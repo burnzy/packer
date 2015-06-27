@@ -305,7 +305,11 @@ func (p *Provisioner) createJson(ui packer.Ui, comm packer.Communicator) (string
 func (p *Provisioner) createDir(ui packer.Ui, comm packer.Communicator, dir string) error {
 	ui.Message(fmt.Sprintf("Creating directory: %s", dir))
 
-	mkdirCmd := fmt.Sprintf("mkdir -p '%s'", dir)
+	// mkdirCmd := fmt.Sprintf("mkdir -p '%s'", dir)
+	// if !p.config.PreventSudo {
+	// 	mkdirCmd = "sudo " + mkdirCmd
+	// }
+	mkdirCmd := fmt.Sprintf("mkdir \"%s\"", dir)
 	if !p.config.PreventSudo {
 		mkdirCmd = "sudo " + mkdirCmd
 	}
@@ -319,17 +323,21 @@ func (p *Provisioner) createDir(ui packer.Ui, comm packer.Communicator, dir stri
 	}
 
 	// Chmod the directory to 0777 just so that we can access it as our user
-	mkdirCmd = fmt.Sprintf("chmod 0777 '%s'", dir)
-	if !p.config.PreventSudo {
-		mkdirCmd = "sudo " + mkdirCmd
-	}
-	cmd = &packer.RemoteCmd{Command: mkdirCmd}
-	if err := cmd.StartWithUi(comm, ui); err != nil {
-		return err
-	}
-	if cmd.ExitStatus != 0 {
-		return fmt.Errorf("Non-zero exit status. See output above for more info.")
-	}
+	// mkdirCmd = fmt.Sprintf("chmod 0777 '%s'", dir)
+	// if !p.config.PreventSudo {
+	// 	mkdirCmd = "sudo " + mkdirCmd
+	// }
+	// mkdirCmd = fmt.Sprintf("c:/opscode/chef/embedded/bin/chmod.exe 0777 \"%s\"", dir)
+	// if !p.config.PreventSudo {
+	// 	mkdirCmd = "sudo " + mkdirCmd
+	// }
+	// cmd = &packer.RemoteCmd{Command: mkdirCmd}
+	// if err := cmd.StartWithUi(comm, ui); err != nil {
+	// 	return err
+	// }
+	// if cmd.ExitStatus != 0 {
+	// 	return fmt.Errorf("Non-zero exit status. See output above for more info.")
+	// }
 
 	return nil
 }
