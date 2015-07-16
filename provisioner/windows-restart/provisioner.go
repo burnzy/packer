@@ -90,9 +90,9 @@ func (p *Provisioner) Provision(ui packer.Ui, comm packer.Communicator) error {
 		return err
 	}
 
-	if cmd.ExitStatus != 0 {
-		return fmt.Errorf("Restart script exited with non-zero exit status: %d", cmd.ExitStatus)
-	}
+	// if cmd.ExitStatus != 1 {
+	// 	return fmt.Errorf("Restart script exited with non-zero exit status: %d", cmd.ExitStatus)
+	// }
 
 	return waitForRestart(p)
 }
